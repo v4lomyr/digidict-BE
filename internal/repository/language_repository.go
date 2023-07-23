@@ -10,7 +10,7 @@ import (
 
 type (
 	LanguageRepository interface {
-		GetManyLanguages(ctx context.Context) ([]*entity.Language, error)
+		FindManyLanguages(ctx context.Context) ([]*entity.Language, error)
 	}
 
 	languageRepository struct {
@@ -24,7 +24,7 @@ func New(db *database.GormWrapper) LanguageRepository {
 	}
 }
 
-func (lr languageRepository) GetManyLanguages(ctx context.Context) ([]*entity.Language, error) {
+func (lr languageRepository) FindManyLanguages(ctx context.Context) ([]*entity.Language, error) {
 	languages := make([]*entity.Language, 0)
 
 	q := lr.db.Start(ctx)
