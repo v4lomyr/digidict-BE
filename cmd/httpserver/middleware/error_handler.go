@@ -24,7 +24,6 @@ func (m *middleware) ErrorHandler() gin.HandlerFunc {
 		c.Next()
 
 		if len(c.Errors) == 1 {
-			//usually not a good idea, but since Gin already throws panic if we give nil to c.Error, it is probably safe
 			var err error
 			err = c.Errors[0]
 

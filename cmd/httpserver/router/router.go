@@ -12,7 +12,9 @@ func Init(h *handler.Handler) *gin.Engine {
 
 	middleware := middleware.NewMiddleware()
 	router.Use(
+		middleware.RequestId(),
 		middleware.ErrorHandler(),
+		middleware.Logger(),
 	)
 
 	languageRouter(router, h)
