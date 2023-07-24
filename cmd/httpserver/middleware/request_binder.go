@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/v4lomyr/digidict-BE/internal/constants"
 	apperror "github.com/v4lomyr/digidict-BE/internal/error"
+	"github.com/v4lomyr/digidict-BE/internal/util/validator"
 )
 
 func bind[requestStruct any](c *gin.Context, contextName string, binder func(interface{}) error) {
@@ -11,6 +12,12 @@ func bind[requestStruct any](c *gin.Context, contextName string, binder func(int
 
 	if err := binder(&body); err != nil {
 		c.Error(apperror.NewClientError(err))
+		c.Abort()
+		return
+	}
+
+	if err := validator.GetValidator().Validate(body); err != nil {
+		c.Error(err)
 		c.Abort()
 		return
 	}

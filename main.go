@@ -10,6 +10,7 @@ import (
 	"github.com/v4lomyr/digidict-BE/cmd/httpserver"
 	"github.com/v4lomyr/digidict-BE/internal/config"
 	"github.com/v4lomyr/digidict-BE/internal/logger"
+	"github.com/v4lomyr/digidict-BE/internal/util/validator"
 )
 
 const httpServerMode = "http-server"
@@ -30,6 +31,8 @@ func main() {
 	config.InitConfig()
 
 	logger.SetLogrusLogger(config.Get())
+
+	validator.InitValidator()
 
 	var stopFn func()
 	switch mode {
