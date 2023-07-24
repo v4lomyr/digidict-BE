@@ -41,6 +41,9 @@ func InitValidator() {
 
 		return name
 	})
+
+	validate.RegisterValidation("language", validateLanguage)
+
 	en_translations.RegisterDefaultTranslations(validate, trans)
 	vldtr = &customValidator{
 		validate:   validate,
@@ -60,10 +63,9 @@ func (vldtr customValidator) Validate(obj interface{}) error {
 		for _, e := range validatorErrs {
 			translatedErr := e.Translate(vldtr.translator)
 
-			if e.ActualTag() == "username" {
-				translatedErr = "Username must contain only string and digit"
-			} else if e.ActualTag() == "password" {
-				translatedErr = "Password must have at least 8 characters, 1 symbol, 1 capital letter, and 1 number"
+			switch e.ActualTag() {
+			case "language":
+				translatedErr = "currently only en or id is available"
 			}
 
 			errData := dto.ValidationErrorResponse{
