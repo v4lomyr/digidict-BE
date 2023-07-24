@@ -18,6 +18,7 @@ func Init(h *handler.Handler) *gin.Engine {
 	)
 
 	languageRouter(router, h)
+	dictionaryRouter(router, h)
 
 	return router
 }
