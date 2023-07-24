@@ -11,4 +11,6 @@ type Usecase interface {
 
 	GetIndonesianDictionary(ctx context.Context) (*dto.GetDictionaryResponse, error)
 	GetEnglishDictionary(ctx context.Context) (*dto.GetDictionaryResponse, error)
+
+	Translate(ctx context.Context, payload *dto.TranslateJSONRequest) (*dto.TranslateResponse, error)
 }

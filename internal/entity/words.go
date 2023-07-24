@@ -29,4 +29,12 @@ type (
 		UpdatedAt time.Time
 		DeletedAt gorm.DeletedAt `gorm:"index"`
 	}
+
+	Translation struct {
+		TranslationId uint64 `gorm:"primaryKey"`
+		Word
+		CreatedAt time.Time
+		UpdatedAt time.Time
+		DeletedAt gorm.DeletedAt `gorm:"index"`
+	}
 )

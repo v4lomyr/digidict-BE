@@ -19,6 +19,7 @@ func Init(h *handler.Handler) *gin.Engine {
 
 	languageRouter(router, h)
 	dictionaryRouter(router, h)
+	translateRouter(router, h)
 
 	return router
 }

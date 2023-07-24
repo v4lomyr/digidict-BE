@@ -6,6 +6,8 @@ const (
 	LanguagePath = "/language"
 
 	DictionaryPath = "/dictionaries/:language"
+
+	TranslatePath = "/translate"
 )
 
 func PublicRoute(path string) string {
