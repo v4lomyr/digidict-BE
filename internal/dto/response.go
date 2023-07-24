@@ -2,13 +2,13 @@ package dto
 
 type ErrorResponse struct {
 	Message string      `json:"message"`
-	Code    string      `json:"code"`
+	Code    int         `json:"code"`
 	Data    interface{} `json:"data"`
 }
 
 type SuccessResponse struct {
 	Message string      `json:"message"`
-	Code    string      `json:"code"`
+	Code    int         `json:"code"`
 	Data    interface{} `json:"data"`
 }
 

@@ -5,33 +5,30 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
+	"github.com/v4lomyr/digidict-BE/cmd/httpserver/handler"
+	"github.com/v4lomyr/digidict-BE/cmd/httpserver/router"
 	"github.com/v4lomyr/digidict-BE/internal/config"
-	"github.com/v4lomyr/digidict-BE/internal/database"
 	"github.com/v4lomyr/digidict-BE/internal/logger"
-
-	"github.com/gin-gonic/gin"
+	"github.com/v4lomyr/digidict-BE/internal/usecase"
 )
 
-func StartGinHTTPServer(cfg *config.Config) {
-	db := database.InitGorm(cfg)
+var srv *http.Server
 
-	_ = database.NewGormWrapper(db)
+func Start() (stopFn func()) {
+	usecase := usecase.InitDependencies()
+	handler := handler.NewHandler(usecase)
 
-	r := gin.New()
-	r.ContextWithFallback = true
+	router := router.Init(handler)
 
-	srv := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", cfg.HttpServer.Host, cfg.HttpServer.Port),
-		Handler: r,
+	srv = &http.Server{
+		Addr:    fmt.Sprintf("%s:%d", config.Get().HttpServer.Host, config.Get().HttpServer.Port),
+		Handler: router,
 	}
 
 	go func() {
-		logger.Log.Info("running server on port :", cfg.HttpServer.Port)
+		logger.Log.Info("running server on port :", config.Get().HttpServer.Port)
 		if err := srv.ListenAndServe(); err != nil {
 			if !errors.Is(err, http.ErrServerClosed) {
 				logger.Log.Fatal("error while server listen and serve: ", err)
@@ -40,12 +37,13 @@ func StartGinHTTPServer(cfg *config.Config) {
 		logger.Log.Info("server is not receiving new requests...")
 	}()
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	return func() {
+		GracefulShutdown()
+	}
+}
 
-	<-quit
-
-	graceDuration := time.Duration(cfg.HttpServer.GracePeriod) * time.Second
+func GracefulShutdown() (err error) {
+	graceDuration := time.Duration(config.Get().HttpServer.GracePeriod) * time.Second
 
 	ctx, cancel := context.WithTimeout(context.Background(), graceDuration)
 	defer cancel()
@@ -56,4 +54,5 @@ func StartGinHTTPServer(cfg *config.Config) {
 	}
 
 	logger.Log.Info("http server is shutting down gracefully")
+	return
 }
